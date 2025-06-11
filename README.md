@@ -1,6 +1,10 @@
-# Task_Management_System (Front-End)
-
+# Task_Management_System Parte Front-End
 Projeto referente a disciplina de Desenvolvimento de Aplicações Corporativas (DAC): Sistema que gerencia as tarefas do dia a dia.
+
+Inicialmente, este projeto foi criado por Jadson Anderson, um dos integrantes e líder da equipe, que, ao estar aprendendo mais sobre o framework Spring, começou a desenvolver o sistema, mais tarde, juntamente com os integrantes Carlos Henrique, Emanuel Lopes e John Herbert continou o desenvolvimento do sistema.
+
+O sistema está integrado com o banco de dados PostgreSQL, biblioteca front-end ReactJS, plataforma Docker, o padrão JWT, ferramenta Swagger e a linguagem Java.
+
 
 # Sistema de Gerenciamento de Tarefas
 
@@ -10,39 +14,39 @@ O sistema de gerenciamento de tarefas é uma aplicação web desenvolvida com o 
 
 ## **Funcionalidades Principais**
 
-1. ### **📋 Cadastro de Tarefas** 
+1. ### **📋 Cadastro de Tarefas**
 
    * Crie novas tarefas informando título, descrição, data de vencimento, prioridade (baixa, média, alta) e status (pendente, em andamento, concluída).
 
    * Cada tarefa pode ser associada a uma categoria ou projeto.
 
-2. ## **📂 Organização e Filtros** 
+2. ## **📂 Organização e Filtros**
 
    * Visualize suas tarefas organizadas por data, prioridade, status ou categoria.
 
    * Utilize filtros para encontrar rapidamente tarefas específicas.
 
-3. ### **🔄 Atualização de Tarefas** 
+3. ### **🔄 Atualização de Tarefas**
 
    * Edite qualquer tarefa para alterar seu status, prazos, descrição ou prioridade.
 
    * Marque tarefas como concluídas com apenas um clique.
 
-4. ### **📆 Visão de Agenda** 
+4. ### **📆 Visão de Agenda**
 
-   * ### Acompanhe suas tarefas em uma visualização de calendário para facilitar o planejamento da sua semana ou mês. 
+   * ### Acompanhe suas tarefas em uma visualização de calendário para facilitar o planejamento da sua semana ou mês.
 
-5. ### **🔔 Lembretes e Notificações** 
+5. ### **🔔 Lembretes e Notificações**
 
    * Receba alertas automáticos sobre prazos de tarefas que estão próximas do vencimento.
 
-6. ### **👥 Gestão de Usuários (opcional)** 
+6. ### **👥 Gestão de Usuários (opcional)**
 
    * Crie múltiplos usuários e permita o gerenciamento de tarefas em equipe.
 
    * Atribua tarefas a usuários diferentes e acompanhe o progresso de cada um.
 
-**Priorização automática de tarefas** (com base em deadlines, urgência e impacto).    
+**Priorização automática de tarefas** (com base em deadlines, urgência e impacto).
 
 **Integração com e-mail, Slack, Notion ou Google Calendar** para importar tarefas e prazos.
 
@@ -67,23 +71,23 @@ O sistema de gerenciamento de tarefas é uma aplicação web desenvolvida com o 
 
 ## **Guia de uso do sistema**
 
-1. ### **Criar uma Tarefa:** 
+1. ### **Criar uma Tarefa:**
 
    * Acesse a aba “Nova Tarefa” e preencha os campos obrigatórios.
 
    * Clique em “Salvar”.
 
-2. ### **Editar ou Deletar:** 
+2. ### **Editar ou Deletar:**
 
    * Na lista de tarefas, selecione a que deseja modificar.
 
    * Use os botões “Editar” ou “Excluir”.
 
-3. ### **Filtrar Tarefas:** 
+3. ### **Filtrar Tarefas:**
 
    * Utilize o menu de filtros para selecionar por data, status ou prioridade.
 
-4. ### **Visualização por Calendário:** 
+4. ### **Visualização por Calendário:**
 
    * Vá até a aba “Agenda” para ver todas as tarefas organizadas cronologicamente.
 
@@ -92,14 +96,104 @@ O sistema de gerenciamento de tarefas é uma aplicação web desenvolvida com o 
 ### **❓ Dúvidas Frequentes**
 
 * **Posso recuperar uma tarefa excluída?**  
-   Atualmente, a exclusão é permanente. Use com cuidado.
+  Atualmente, a exclusão é permanente. Use com cuidado.
 
 * **Posso compartilhar tarefas com outras pessoas?**  
-   Sim, se a funcionalidade de usuários estiver habilitada.
+  Sim, se a funcionalidade de usuários estiver habilitada.
 
 * **É possível acessar o sistema por dispositivos móveis?**  
-   Sim, o sistema é responsivo e pode ser acessado por celulares e tablets.  
+  Sim, o sistema é responsivo e pode ser acessado por celulares e tablets.
 ---
 
-Para que seu sistema de gerenciamento de tarefas se destaque e não pareça apenas mais um projeto genérico, você pode incluir **funcionalidades inovadoras, úteis e voltadas à experiência real do usuário**. Aqui vão algumas ideias de features que podem diferenciar seu sistema:
 
+# In English
+
+# Task_Management_System Part Front-End
+This project was developed for the Corporate Application Development course. It is a system designed to help users manage their daily tasks efficiently.
+
+The project was initially created by Jadson Anderson, who also serves as the team lead. While deepening his knowledge of the Spring framework, he began developing the system. Later, development continued in collaboration with team members Carlos Henrique, Emanuel Lopes, and John Herbert.
+
+The system integrates PostgreSQL as the database, ReactJS for the front-end, Docker for containerization, JWT for authentication, Swagger for API documentation, and is built using Java.
+
+#Task Management System
+A web application designed to help users organize and manage their personal and professional tasks. The system allows users to create, view, update, and delete tasks, as well as categorize them by priority, status, and due date. The application is modular, scalable, and built with future expansion in mind. It can be used individually or in collaborative environments with multiple users.
+
+## **Key Features**
+1. ### **📋 Task Creation**
+* Create new tasks by providing a title, description, due date, priority (low, medium, high), and status (pending, in progress, completed).
+
+* Each task can be linked to a specific category or project.
+
+2. ## **📂 Organization and Filtering**
+* View tasks organized by date, priority, status, or category.
+
+* Use filters to quickly locate specific tasks.
+
+3. ### **🔄 Task Updates**
+* Edit tasks to change their status, deadlines, descriptions, or priorities.
+
+* Mark tasks as completed with a single click.
+
+4. ### **📆 Calendar View**
+* ### Track your tasks using a calendar view to better plan your week or month.
+
+5. ### **🔔 Reminders and Notifications**
+* Receive automatic alerts for tasks nearing their deadlines.
+
+6. ### **👥 User Management (Optional)**
+* Create multiple user accounts to enable team collaboration.
+
+* Assign tasks to different users and monitor their progress.
+
+**Planned or Advanced Features
+Automatic task prioritization** (based on deadlines, urgency, and impact).
+
+**Integration with email, Slack, Notion, or Google Calendar** (for task import and synchronization).
+
+**Per-task or per-project chat** (with message history).
+
+**Customizable Kanban boards with advanced filtering** (by priority, deadline, assignee, etc.).
+
+**Weekly/monthly productivity reports.**
+
+**Time analysis by task category** (e.g., work, study, personal).
+
+**Offline-first mode** (only available for personal tasks; shared tasks will require an internet connection).
+
+**Virtual assistant that suggests actions** (e.g., “You didn’t finish Task X yesterday — move it to today?”).
+
+**Gamification** (elements such as achievements, productivity levels, and visual rewards).
+
+**Built-in Pomodoro timer** (with session-based focus reports).
+
+**Task redistribution suggestions** (in case of team member overload).
+
+## **System Usage Guide**
+1. ### **Creating a Task**
+* Go to the “New Task” tab and fill out the required fields.
+
+* Click “Save”.
+
+2. ### **Editing or Deleting a Task**
+* From the task list, select the task you wish to modify.
+
+* Use the “Edit” or “Delete” buttons accordingly.
+
+3. ### **Filtering Tasks**
+* Use the filter menu to sort tasks by date, status, or priority.
+
+4. ### **Calendar View**
+* Go to the “Calendar” tab to view all tasks organized chronologically.
+
+---
+
+### **❓ Frequently Asked Questions**
+* **Can I recover a deleted task?**
+  No. Deletion is permanent, so please use caution.
+
+* **Can I share tasks with others?**
+  Yes, if the user management feature is enabled.
+
+* **Can I access the system from a mobile device?**
+  Yes. The application is responsive and accessible on smartphones and tablets.
+---
