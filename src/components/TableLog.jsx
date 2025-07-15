@@ -1,44 +1,39 @@
-function TableLog(props) {
-  // Variabel
-  const { labelId } = props;
-  const { labelIdEntityExternal } = props;
-  const { labelActionIn } = props;
-  const { labelActionOut } = props;
-  const { labelInclusionDate } = props;
+// src/components/TableLog.jsx
+import React from "react";
 
-  // Values
-  const { IdLog } = props;
-  const { IDEntityExternal } = props;
-  const { actionIn } = props;
-  const { actionOut } = props;
-  const { inclusionDate } = props;
+function TableLog({ logs }) {
+  if (!logs || logs.length === 0) {
+    return <p>Nenhum log para exibir.</p>;
+  }
 
   return (
-    <table className="table table-hover">
-      {" "}
-      {/* class -> className */}
-      <thead>
-        <div style={{ height: "60px" }}></div>
-        <tr>
-          <th scope="col">{labelId} </th>
-          <th scope="col">{labelIdEntityExternal}</th>
-          <th scope="col">{labelActionIn}</th>
-          <th scope="col">{labelActionOut}</th>
-          <th scope="col">{labelInclusionDate}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr className="table-light">
-          {" "}
-          {/* class -> className */}
-          <td>{IdLog}</td>
-          <td>{IDEntityExternal}</td>
-          <td>{actionIn}</td>
-          <td>{actionOut}</td>
-          <td>{inclusionDate}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div className="table-responsive">
+      <table className="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>ID Log</th>
+            <th>ID Usuário</th>
+            <th>Ação Entrada</th>
+            <th>Ação Saída</th>
+            <th>Data Inclusão</th>
+          </tr>
+        </thead>
+        <tbody>
+          {logs.map((log) => (
+            // Usamos log.idLog para a key, pois ele deve ser único para cada log
+            <tr key={log.idLog}>
+              <td>{log.idLog}</td> {/* CORRIGIDO: idLog (i minúsculo) */}
+              <td>{log.idUser}</td>{" "}
+              {/* Presumi idUser (i minúsculo), verifique seu DTO se é IdUser */}
+              <td>{log.actionIn}</td>
+              <td>{log.actionOut}</td>{" "}
+              {/* CORRIGIDO: actionOut (a minúsculo) */}
+              <td>{new Date(log.inclusionDate).toLocaleString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
