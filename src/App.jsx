@@ -1,35 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import BaseBoard from "./components/BaseBoard";
+import UserLogPage from "./pages/UserLogPage";
+import NavBarLog from "./components/NavBarLog";
+import PageAddUserLog from "./components/PageAddUserLog";
+
+// Utils
+const PAGE_VIEWS = {
+  HOME: "home",
+  VIEW_LOGS: "viewLogs",
+  ADD_LOGS: "addLogs",
+  // ... outras páginas
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentPage, setCurrentPage] = useState(PAGE_VIEWS.HOME); // Começa na página inicial
+
+  // Função para exibir a UserLogPage
+  const handleShowUserLogPage = () => {
+    setCurrentPage(PAGE_VIEWS.VIEW_LOGS);
+  };
+
+  // Função para exibir a PageAddUserLog
+  const handleShowAddUserLogPage = () => {
+    setCurrentPage(PAGE_VIEWS.ADD_LOGS);
+  };
+
+  // Função para renderizar o conteúdo da página principal com base no estado
+  const renderMainContent = () => {
+    switch (currentPage) {
+      case PAGE_VIEWS.VIEW_LOGS:
+        return <UserLogPage />;
+      case PAGE_VIEWS.ADD_LOGS:
+        return <PageAddUserLog />;
+      case PAGE_VIEWS.HOME:
+      default:
+        return (
+          <div className="container mt-5">
+            <h1>Bem-vindo ao Gerenciador de Tarefas!</h1>
+            <p>Selecione uma opção no menu acima.</p>
+          </div>
+        );
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+    >
+      <NavBarLog
+        onVisualizarUsuariosClick={handleShowUserLogPage}
+        onAdicionarUsuariosClick={handleShowAddUserLogPage} // <--- NOVO: Passe a nova função
+      />
+
+      <div style={{ flexGrow: 1 }}>
+        {renderMainContent()}{" "}
+        {/* Chama a função que renderiza a página atual */}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+      <BaseBoard />
+    </div>
+  );
 }
 
-export default App
+export default App;
