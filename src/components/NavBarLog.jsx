@@ -1,6 +1,10 @@
 // src/components/NavBarLog.jsx
 
-function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick }) {
+function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
+  onCadastrarTarefaClick,
+  onAtualizarTarefaClick,
+  onApagarTarefaClick,
+  onListarTarefasClick, }) {
   return (
     // Removi o <div> extra que estava envolvendo a <nav>.
     // A <nav> é o elemento raiz do componente.
@@ -27,15 +31,72 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick }) {
         <div className="collapse navbar-collapse" id="navbarColor02">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
-              <a className="nav-link active" href="#">
+              <a className="nav-link active" href="#" onClick={() => { /* Lógica para voltar à HOME */ }}>
                 Início
                 <span className="visually-hidden">(current)</span>
               </a>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">
+            <li className="nav-item dropdown">
+              <a
+                className="nav-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+                href="#"
+                role="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
                 Tarefas
               </a>
+              <div className="dropdown-menu">
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault(); // Impede a navegação padrão do link
+                      onCadastrarTarefaClick(); // Chama a função passada do App.jsx
+                    }}
+                  >
+                    Cadastrar
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onAtualizarTarefaClick();
+                    }}
+                  >
+                    Atualizar
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onApagarTarefaClick();
+                    }}
+                  >
+                    Apagar
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onListarTarefasClick();
+                    }}
+                  >
+                    Listar
+                  </a>
+                </li>
+              </div>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="#">
