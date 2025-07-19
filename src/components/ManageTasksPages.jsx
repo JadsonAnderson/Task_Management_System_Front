@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
-function ListTasksPage() {
+function ManageTasksPage({ onEditTask, onDeleteTask }) {
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [idInput, setIdInput] = useState(''); // Estado para o input do ID
 
   const fetchTasks = async () => {
     setIsLoading(true);
@@ -29,6 +31,19 @@ function ListTasksPage() {
     fetchTasks();
   }, []);
 
+  // Funções para lidar com as ações via input de ID
+  const handleUpdateById = () => {
+    if (idInput) {
+      onEditTask(idInput); // Chama a função para editar com o ID do input
+    }
+  };
+
+  const handleDeleteById = () => {
+    if (idInput && window.confirm(`Tem certeza que deseja apagar a tarefa com ID: ${idInput}?`)) {
+      onDeleteTask(idInput); // Chama a função para deletar com o ID do input
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mt-5 text-center">
@@ -53,9 +68,38 @@ function ListTasksPage() {
 
   return (
     <div className="container mt-5">
-      <h2>Visualizar Todas as Tarefas</h2>
-      <p>Abaixo está a lista completa de tarefas cadastradas.</p>
+      <h2>Gerenciar Tarefas</h2>
+      <p>Visualize as tarefas cadastradas e utilize os campos abaixo para atualizar/apagar por ID.</p>
 
+      {/* Seção para input de ID */}
+      <div className="card mb-4 p-3 shadow-sm">
+        <h5 className="card-title">Ações por ID</h5>
+        <div className="input-group mb-3">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Digite o ID da tarefa"
+            value={idInput}
+            onChange={(e) => setIdInput(e.target.value)}
+          />
+          <button
+            className="btn btn-warning"
+            onClick={handleUpdateById}
+            disabled={!idInput}
+          >
+            Atualizar por ID
+          </button>
+          <button
+            className="btn btn-danger"
+            onClick={handleDeleteById}
+            disabled={!idInput}
+          >
+            Apagar por ID
+          </button>
+        </div>
+      </div>
+
+      <h3 className="mt-4">Tarefas Cadastradas</h3>
       {tasks.length === 0 && !isLoading && !error ? (
         <div className="alert alert-info" role="alert">
           Nenhuma tarefa encontrada.
@@ -79,7 +123,6 @@ function ListTasksPage() {
                 <td>{task.description}</td>
                 <td>{task.date}</td>
                 <td>{task.hour}</td>
-                {/* As colunas de "Ações Rápidas" foram removidas aqui */}
               </tr>
             ))}
           </tbody>
@@ -89,4 +132,9 @@ function ListTasksPage() {
   );
 }
 
-export default ListTasksPage;
+ManageTasksPage.propTypes = {
+  onEditTask: PropTypes.func.isRequired,
+  onDeleteTask: PropTypes.func.isRequired,
+};
+
+export default ManageTasksPage;

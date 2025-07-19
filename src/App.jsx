@@ -6,6 +6,7 @@ import PageAddUserLog from "./components/PageAddUserLog";
 import AddTaskPage from "./components/AddTaskPage";
 import UpdateTaskPage from "./components/UpdateTaskPage";
 import DeleteTaskPage from "./components/DeleteTaskPage";
+import ManageTasksPage from "./components/ManageTasksPages";
 import ListTasksPage from "./components/ListTasksPage";
 
 // Utils
@@ -16,7 +17,8 @@ const PAGE_VIEWS = {
   ADD_TASK: "addTask",
   UPDATE_TASK: "updateTask",
   DELETE_TASK: "deleteTask",
-  LIST_TASKS: "listTasks",
+  MANAGE_TASKS: "manageTasks",
+  LIST_TASKS_ONLY: "listTasksOnly",
 };
 
 function App() {
@@ -24,53 +26,52 @@ function App() {
   const [taskToUpdateId, setTaskToUpdateId] = useState(null);
   const [taskToDeleteId, setTaskToDeleteId] = useState(null);
 
-  // Função para exibir a UserLogPage
   const handleShowUserLogPage = () => {
     setCurrentPage(PAGE_VIEWS.VIEW_LOGS);
   };
 
-  // Função para exibir a PageAddUserLog
   const handleShowAddUserLogPage = () => {
     setCurrentPage(PAGE_VIEWS.ADD_LOGS);
   };
 
-  // Função para cadastrar uma nova tarefa
   const handleShowAddTaskPage = () => {
     setCurrentPage(PAGE_VIEWS.ADD_TASK);
   };
 
-  // Função para atualizar uma tarefa
   const handleShowUpdateTaskPage = (id) => {
-    setTaskToUpdateId(id); // Guarda o ID no estado
+    setTaskToUpdateId(id);
     setCurrentPage(PAGE_VIEWS.UPDATE_TASK);
   };
 
-  // Função para apagar uma tarefa
   const handleShowDeleteTaskPage = (id) => {
-    setTaskToDeleteId(id); // Guarda o ID da tarefa a ser apagada
+    setTaskToDeleteId(id);
     setCurrentPage(PAGE_VIEWS.DELETE_TASK);
   };
 
-  // Função para listar uma tarefa
-  const handleShowListTasksPage = () => {
-    setTaskToUpdateId(null); // Limpa IDs ao ir para a lista
+  const handleShowManageTasksPage = () => {
+    setTaskToUpdateId(null);
     setTaskToDeleteId(null);
+    setCurrentPage(PAGE_VIEWS.MANAGE_TASKS);
+  };
+
+  // Função para a nova página de listagem pura
+  const handleShowListTasksOnlyPage = () => {
     setCurrentPage(PAGE_VIEWS.LIST_TASKS);
   };
 
-  // Callback para quando uma tarefa é apagada com sucesso
   const handleTaskDeleted = () => {
-    setTaskToDeleteId(null); // Limpa o ID de exclusão
-    setCurrentPage(PAGE_VIEWS.LIST_TASKS); // Volta para a lista atualizada
+    setTaskToDeleteId(null);
+    // Após deletar, o ideal é voltar para a página de gerenciamento,
+    // pois a página de "Listar" não tem ações de delete/update.
+    setCurrentPage(PAGE_VIEWS.MANAGE_TASKS);
   };
 
-   // Callback para cancelar a exclusão ou voltar de um erro
   const handleCancelDelete = () => {
-    setTaskToDeleteId(null); // Limpa o ID de exclusão
-    setCurrentPage(PAGE_VIEWS.LIST_TASKS); // Volta para a lista
+    setTaskToDeleteId(null);
+    // Após cancelar, volta para a página de gerenciamento de tarefas
+    setCurrentPage(PAGE_VIEWS.MANAGE_TASKS);
   };
 
-  // Função para renderizar o conteúdo da página principal com base no estado
   const renderMainContent = () => {
     switch (currentPage) {
       case PAGE_VIEWS.VIEW_LOGS:
@@ -83,27 +84,28 @@ function App() {
         if (taskToUpdateId) {
           return <UpdateTaskPage idTask={taskToUpdateId} />;
         } else {
+          // Ajustado para redirecionar para ManageTasksPage, pois é onde se gerencia
           return (
             <div className="container mt-5 alert alert-info">
-              <p>Por favor, selecione uma tarefa para editar na <button className="btn btn-link p-0" onClick={() => handleShowListTasksPage()}>Listagem de Tarefas</button>.</p>
+              <p>Por favor, selecione uma tarefa para editar na <button className="btn btn-link p-0" onClick={handleShowManageTasksPage}>Gerenciar Tarefas</button>.</p>
             </div>
           );
         }
       case PAGE_VIEWS.DELETE_TASK:
-        // Renderiza DeleteTaskPage SOMENTE SE taskToDeleteId NÃO FOR NULL.
-        // Passa callbacks para quando a tarefa for apagada ou o usuário cancelar.
         if (taskToDeleteId) {
           return <DeleteTaskPage idTask={taskToDeleteId} onTaskDeleted={handleTaskDeleted} onCancel={handleCancelDelete} />;
         } else {
+          // Ajustado para redirecionar para ManageTasksPage, pois é onde se gerencia
           return (
             <div className="container mt-5 alert alert-info">
-              <p>Por favor, selecione uma tarefa para apagar na <button className="btn btn-link p-0" onClick={() => handleShowListTasksPage()}>Listagem de Tarefas</button>.</p>
+              <p>Por favor, selecione uma tarefa para apagar na <button className="btn btn-link p-0" onClick={handleShowManageTasksPage}>Gerenciar Tarefas</button>.</p>
             </div>
           );
         }
-      case PAGE_VIEWS.LIST_TASKS:
-        // Passa tanto a função de editar quanto a de apagar
-        return <ListTasksPage onEditTask={handleShowUpdateTaskPage} onDeleteTask={handleShowDeleteTaskPage} />;
+      case PAGE_VIEWS.MANAGE_TASKS:
+        return <ManageTasksPage onEditTask={handleShowUpdateTaskPage} onDeleteTask={handleShowDeleteTaskPage} />;
+      case PAGE_VIEWS.LIST_TASKS_ONLY: // Novo caso para a página de listagem pura
+        return <ListTasksPage />;
       case PAGE_VIEWS.HOME:
       default:
         return (
@@ -123,11 +125,11 @@ function App() {
         onVisualizarUsuariosClick={handleShowUserLogPage}
         onAdicionarUsuariosClick={handleShowAddUserLogPage}
         onCadastrarTarefaClick={handleShowAddTaskPage}
-        // Os botões "Atualizar Tarefa" e "Apagar Tarefa" no NavBar
-        // agora direcionam para a listagem para que o usuário possa selecionar.
-        onAtualizarTarefaClick={handleShowListTasksPage}
-        onApagarTarefaClick={handleShowListTasksPage} // Leva para a lista para escolher qual apagar
-        onListarTarefasClick={handleShowListTasksPage}
+        // "Atualizar" e "Apagar" continuam levando para a página de gerenciamento
+        onAtualizarTarefaClick={handleShowManageTasksPage}
+        onApagarTarefaClick={handleShowManageTasksPage}
+        // O botão "Listar" agora aponta para a nova página de listagem pura
+        onListarTarefasClick={handleShowListTasksOnlyPage}
       />
 
       <div style={{ flexGrow: 1 }}>

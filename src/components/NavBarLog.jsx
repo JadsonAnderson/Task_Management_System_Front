@@ -1,17 +1,16 @@
-// src/components/NavBarLog.jsx
+import PropTypes from 'prop-types';
 
-function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
+function NavBarLog({
+  onVisualizarUsuariosClick,
+  onAdicionarUsuariosClick,
   onCadastrarTarefaClick,
   onAtualizarTarefaClick,
   onApagarTarefaClick,
-  onListarTarefasClick, }) {
+  onListarTarefasClick, // Certifique-se de que está aqui
+}) {
   return (
-    // Removi o <div> extra que estava envolvendo a <nav>.
-    // A <nav> é o elemento raiz do componente.
-    // Ter um <div> extra sem propósito pode afetar o layout.
     <nav className="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
       <div className="container-fluid">
-        {/* Adicionei o brand "Gerenciador de Tarefas" aqui, caso queira */}
         <a className="navbar-brand" href="#">
           Painel
         </a>
@@ -53,8 +52,8 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
                     className="dropdown-item"
                     href="#"
                     onClick={(e) => {
-                      e.preventDefault(); // Impede a navegação padrão do link
-                      onCadastrarTarefaClick(); // Chama a função passada do App.jsx
+                      e.preventDefault();
+                      onCadastrarTarefaClick();
                     }}
                   >
                     Cadastrar
@@ -90,7 +89,7 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      onListarTarefasClick();
+                      onListarTarefasClick(); // Agora chama a nova função para a página de listagem pura
                     }}
                   >
                     Listar
@@ -109,7 +108,6 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
               </a>
             </li>
 
-            {/* INÍCIO DO DROPDOWN DE MONITORAMENTO */}
             <li className="nav-item dropdown">
               <a
                 className="nav-link dropdown-toggle"
@@ -122,10 +120,7 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
                 Monitoramento
               </a>
               <div className="dropdown-menu">
-                {/* O item "Usuários" agora será um NOVO DROPDOWN */}
                 <li className="dropdown-item dropend">
-                  {" "}
-                  {/* Use dropend para abrir para a direita */}
                   <a
                     className="dropdown-toggle"
                     href="#"
@@ -135,8 +130,6 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
                     Usuários
                   </a>
                   <ul className="dropdown-menu">
-                    {" "}
-                    {/* O SUBMENU AQUI */}
                     <li>
                       <a
                         className="dropdown-item"
@@ -144,7 +137,6 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
                         onClick={(e) => {
                           e.preventDefault();
                           if (onAdicionarUsuariosClick) {
-                            // Chame a nova prop
                             onAdicionarUsuariosClick();
                           }
                         }}
@@ -155,12 +147,11 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
                     <li>
                       <a
                         className="dropdown-item"
-                        href="#" // Use href="#" e e.preventDefault()
+                        href="#"
                         onClick={(e) => {
-                          e.preventDefault(); // IMPEDE A NAVEGAÇÃO PADRÃO DO LINK
+                          e.preventDefault();
                           if (onVisualizarUsuariosClick) {
-                            // Verifica se a prop existe
-                            onVisualizarUsuariosClick(); // CHAMA A FUNÇÃO PASSADA DO App.jsx
+                            onVisualizarUsuariosClick();
                           }
                         }}
                       >
@@ -168,25 +159,17 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
                       </a>
                     </li>
                     <li>
-                      <a
-                        className="dropdown-item"
-                        href="/monitoramento/usuarios/atualizar"
-                      >
+                      <a className="dropdown-item" href="/monitoramento/usuarios/atualizar">
                         Atualizar Usuário
                       </a>
                     </li>
                     <li>
-                      <a
-                        className="dropdown-item"
-                        href="/monitoramento/usuarios/deletar"
-                      >
+                      <a className="dropdown-item" href="/monitoramento/usuarios/deletar">
                         Deletar Usuário
                       </a>
                     </li>
                   </ul>
                 </li>
-                {/* Fim do novo dropdown "Usuários" */}
-
                 <a className="dropdown-item" href="/monitoramento/agendas">
                   Agendas
                 </a>
@@ -198,15 +181,6 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
           </ul>
 
           <form className="d-flex">
-            {/* A barra de pesquisa e o botão estão dentro de um form,
-                e você tem uma <ul> dentro do <form>.
-                Normalmente, a <ul> de navegação principal vai fora do form,
-                e o form teria apenas o input e o botão.
-                Se a intenção é ter 'Suporte' como um item de menu à direita,
-                ele pode ficar em uma <ul> separada com a classe 'navbar-nav'
-                e 'ms-auto' para empurrá-lo para a direita.
-                Deixei como está no seu código, mas é algo a observar para semântica e layout.
-            */}
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
                 <a className="nav-link" href="#">
@@ -220,5 +194,14 @@ function NavBarLog({ onVisualizarUsuariosClick, onAdicionarUsuariosClick,
     </nav>
   );
 }
+
+NavBarLog.propTypes = {
+  onVisualizarUsuariosClick: PropTypes.func.isRequired,
+  onAdicionarUsuariosClick: PropTypes.func.isRequired,
+  onCadastrarTarefaClick: PropTypes.func.isRequired,
+  onAtualizarTarefaClick: PropTypes.func.isRequired,
+  onApagarTarefaClick: PropTypes.func.isRequired,
+  onListarTarefasClick: PropTypes.func.isRequired, // Certifique-se de que está aqui e é obrigatória
+};
 
 export default NavBarLog;

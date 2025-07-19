@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
-function AddTaskPage() {
+function AddTaskPage( {onCreateTaskSuccess} ) {
   // Estados para armazenar os dados do formulário
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -12,17 +13,17 @@ function AddTaskPage() {
   const handleSubmit = async (event) => {
     event.preventDefault(); // Impede o recarregamento da página
 
-    if (!title.trim() || !date.trim() || !hour.trim()) {
-      setMessage('Título, data e hora são obrigatórios!');
-      return;
+     if (!title.trim() || !date.trim() || !hour.trim()) { // Removido !description.trim()
+      setMessage('Lembre de preencher todos os campos: Título, Data e Hora são obrigatórios!');
+      return; // Interrompe a função se a validação falhar
     }
 
-    const newTaskRequestDTO = {
+    const newTask = {
       title: title,
-      description: description,
+      // Se a descrição estiver vazia, envie null. Caso contrário, envie o valor.
+      description: description.trim() === '' ? null : description,
       date: date, // 'YYYY-MM-DD'
-      hour: hour + ':00', // Adiciona segundos se seu LocalTime espera 'HH:MM:SS'
-                         // Se seu LocalTime espera 'HH:MM', remova ':00'
+      hour: hour + ':00', // Adiciona ':00' para formar 'HH:MM:SS'
     };
 
     try {
@@ -32,38 +33,40 @@ function AddTaskPage() {
           'Content-Type': 'application/json', // Informa que está sendo enviado JSON
           // Adicione cabeçalhos de autenticação/autorização se necessário
         },
-        body: JSON.stringify(newTaskRequestDTO), // Converte o objeto para JSON
+        body: JSON.stringify(newTask), // Converte o objeto para JSON
       });
 
       if (response.ok) {
-        // Se o seu backend retorna TaskResponseDTO com a tarefa criada
-        const taskResponseDTO = await response.json();
-        setMessage(`Tarefa "${taskResponseDTO.title}" cadastrada com sucesso!`);
-        
-        // Limpar o formulário após o sucesso
+        const data = await response.json();
+        setMessage(`Tarefa "${data.title}" (ID: ${data.id}) cadastrada com sucesso!`);
+        // Limpar os campos após o sucesso
         setTitle('');
         setDescription('');
         setDate('');
         setHour('');
+        // Chama a função de callback se ela for fornecida
+        if (onCreateTaskSuccess) {
+            onCreateTaskSuccess();
+        }
       } else {
-        // Se a requisição falhou (ex: status 4xx ou 5xx)
-        const errorData = await response.json(); // Tenta ler a mensagem de erro do backend
-        setMessage(`Erro ao cadastrar tarefa: ${errorData.message || 'Erro desconhecido'}`);
+        // Se a resposta não for OK, tenta ler a mensagem de erro do backend
+        const errorData = await response.json();
+        setMessage(`Erro ao cadastrar tarefa: ${errorData.message || 'Todos os campos são obrigatórios'}`);
         console.error('Erro ao cadastrar tarefa:', errorData);
       }
-    } catch (error) {
-      // Lidar com erros de rede (ex: servidor não está rodando)
-      setMessage(`Erro de conexão com o servidor: ${error.message}`);
-      console.error('Erro na requisição fetch:', error);
+    } catch (err) {
+      // Captura erros de rede ou outros problemas na requisição
+      setMessage(`Erro de conexão: ${err.message}`);
+      console.error('Erro na requisição POST:', err);
     }
   };
 
   return (
     <div className="container mt-5">
       <h2>Cadastrar Nova Tarefa</h2>
-      <p>Preencha os campos abaixo para adicionar uma nova tarefa.</p>
+      <p>Preencha os dados abaixo para adicionar uma nova tarefa.</p>
 
-      {/* Exibe mensagens de feedback */}
+      {/* Exibir mensagem de sucesso ou erro */}
       {message && (
         <div className={`alert ${message.includes('sucesso') ? 'alert-success' : 'alert-danger'}`} role="alert">
           {message}
@@ -79,47 +82,52 @@ function AddTaskPage() {
             id="taskTitle"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            maxLength="100" // Corresponde ao `length = 100` na sua entidade
-            required
+            maxLength="100"
+            required // Atributo HTML para validação básica no navegador
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="taskDescription" className="form-label">Descrição</label>
+          <label htmlFor="taskDescription" className="form-label">Descrição (Opcional)</label>
           <textarea
             className="form-control"
             id="taskDescription"
             rows="3"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            maxLength="500" // Corresponde ao `length = 500` na sua entidade
+            maxLength="500"
+            // Não 'required' para ser opcional
           ></textarea>
         </div>
         <div className="mb-3">
           <label htmlFor="taskDate" className="form-label">Data</label>
           <input
-            type="date" // Input type para data
+            type="date"
             className="form-control"
             id="taskDate"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            required
+            required // Atributo HTML para validação básica no navegador
           />
         </div>
         <div className="mb-3">
           <label htmlFor="taskHour" className="form-label">Hora</label>
           <input
-            type="time" // Input type para hora
+            type="time"
             className="form-control"
             id="taskHour"
             value={hour}
             onChange={(e) => setHour(e.target.value)}
-            required
+            required // Atributo HTML para validação básica no navegador
           />
         </div>
-        <button type="submit" className="btn btn-primary">Salvar Tarefa</button>
+        <button type="submit" className="btn btn-primary">Cadastrar Tarefa</button>
       </form>
     </div>
   );
 }
+
+AddTaskPage.propTypes = {
+    onCreateTaskSuccess: PropTypes.func, // O PropTypes já está correto para 'onCreateTaskSuccess'
+};
 
 export default AddTaskPage;

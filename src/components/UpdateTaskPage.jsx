@@ -1,4 +1,3 @@
-// src/pages/UpdateTaskPage.jsx
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
@@ -75,7 +74,7 @@ function UpdateTaskPage({ idTask }) { // Recebe idTask como prop
         setMessage(`Tarefa "${data.title}" (ID: ${data.id}) atualizada com sucesso!`);
       } else {
         const errorData = await response.json();
-        setMessage(`Erro ao atualizar tarefa: ${errorData.message || 'Erro desconhecido'}`);
+        setMessage(`Erro ao atualizar tarefa: ${errorData.message || 'Lembre-se de preencher todos os campos'}`);
         console.error('Erro ao atualizar tarefa:', errorData);
       }
     } catch (err) {
