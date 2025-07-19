@@ -2,60 +2,54 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 function AddTaskPage( {onCreateTaskSuccess} ) {
-  // Estados para armazenar os dados do formulário
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState(''); // Formato 'YYYY-MM-DD' para LocalDate no Spring
-  const [hour, setHour] = useState(''); // Formato 'HH:MM' ou 'HH:MM:SS' para LocalTime no Spring
-  const [message, setMessage] = useState(''); // Para feedback ao usuário
+  const [date, setDate] = useState('');
+  const [hour, setHour] = useState('');
+  const [message, setMessage] = useState('');
 
-  // Função para lidar com o envio do formulário
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Impede o recarregamento da página
+    event.preventDefault();
 
-     if (!title.trim() || !date.trim() || !hour.trim()) { // Removido !description.trim()
-      setMessage('Lembre de preencher todos os campos: Título, Data e Hora são obrigatórios!');
-      return; // Interrompe a função se a validação falhar
+    const allFieldsEmpty = !title.trim() && !description.trim() && !date.trim() && !hour.trim();
+
+    if (allFieldsEmpty) {
+      setMessage('Lembre de preencher todos os campos: Título, Descrição, Data e Hora são obrigatórios!');
+      return;
     }
 
     const newTask = {
       title: title,
-      // Se a descrição estiver vazia, envie null. Caso contrário, envie o valor.
       description: description.trim() === '' ? null : description,
-      date: date, // 'YYYY-MM-DD'
-      hour: hour + ':00', // Adiciona ':00' para formar 'HH:MM:SS'
+      date: date,
+      hour: hour + ':00',
     };
 
     try {
       const response = await fetch('http://localhost:8080/tasks', {
-        method: 'POST', // Método HTTP para criar um novo recurso
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // Informa que está sendo enviado JSON
-          // Adicione cabeçalhos de autenticação/autorização se necessário
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newTask), // Converte o objeto para JSON
+        body: JSON.stringify(newTask),
       });
 
       if (response.ok) {
         const data = await response.json();
         setMessage(`Tarefa "${data.title}" (ID: ${data.id}) cadastrada com sucesso!`);
-        // Limpar os campos após o sucesso
         setTitle('');
         setDescription('');
         setDate('');
         setHour('');
-        // Chama a função de callback se ela for fornecida
         if (onCreateTaskSuccess) {
-            onCreateTaskSuccess();
+          onCreateTaskSuccess();
         }
       } else {
-        // Se a resposta não for OK, tenta ler a mensagem de erro do backend
         const errorData = await response.json();
-        setMessage(`Erro ao cadastrar tarefa: ${errorData.message || 'Todos os campos são obrigatórios'}`);
+        setMessage(`Erro ao cadastrar tarefa: ${errorData.message || 'Houve um problema ao cadastrar. Verifique os dados.'}`);
         console.error('Erro ao cadastrar tarefa:', errorData);
       }
     } catch (err) {
-      // Captura erros de rede ou outros problemas na requisição
       setMessage(`Erro de conexão: ${err.message}`);
       console.error('Erro na requisição POST:', err);
     }
@@ -65,8 +59,9 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
     <div className="container mt-5">
       <h2>Cadastrar Nova Tarefa</h2>
       <p>Preencha os dados abaixo para adicionar uma nova tarefa.</p>
+      <h4>Todos os campos são obrigatórios</h4>
+      <br/> 
 
-      {/* Exibir mensagem de sucesso ou erro */}
       {message && (
         <div className={`alert ${message.includes('sucesso') ? 'alert-success' : 'alert-danger'}`} role="alert">
           {message}
@@ -83,11 +78,11 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength="100"
-            required // Atributo HTML para validação básica no navegador
+            required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="taskDescription" className="form-label">Descrição (Opcional)</label>
+          <label htmlFor="taskDescription" className="form-label">Descrição (Obrigatório)</label>
           <textarea
             className="form-control"
             id="taskDescription"
@@ -95,7 +90,7 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             maxLength="500"
-            // Não 'required' para ser opcional
+            required
           ></textarea>
         </div>
         <div className="mb-3">
@@ -106,7 +101,7 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
             id="taskDate"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            required // Atributo HTML para validação básica no navegador
+            required
           />
         </div>
         <div className="mb-3">
@@ -117,7 +112,7 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
             id="taskHour"
             value={hour}
             onChange={(e) => setHour(e.target.value)}
-            required // Atributo HTML para validação básica no navegador
+            required
           />
         </div>
         <button type="submit" className="btn btn-primary">Cadastrar Tarefa</button>
@@ -127,7 +122,7 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
 }
 
 AddTaskPage.propTypes = {
-    onCreateTaskSuccess: PropTypes.func, // O PropTypes já está correto para 'onCreateTaskSuccess'
+    onCreateTaskSuccess: PropTypes.func,
 };
 
 export default AddTaskPage;

@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-function UpdateTaskPage({ idTask }) { // Recebe idTask como prop
+function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) { // Recebe idTask e onUpdateTaskSuccess
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [hour, setHour] = useState('');
   const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Para mostrar estado de carregamento
-  const [error, setError] = useState(null); // Para erros de busca
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Efeito para buscar os dados da tarefa quando o componente carrega ou idTask muda
   useEffect(() => {
     const fetchTask = async () => {
       if (!idTask) {
@@ -19,16 +18,17 @@ function UpdateTaskPage({ idTask }) { // Recebe idTask como prop
       }
 
       setIsLoading(true);
-      setError(null); // Limpa erros anteriores
-      setMessage(''); // Limpa mensagens anteriores
+      setError(null);
+      setMessage('');
 
       try {
-        const response = await fetch(`http://localhost:8080/tasks/${idTask}`); // GET by ID
+        const response = await fetch(`http://localhost:8080/tasks/${idTask}`);
         if (response.ok) {
           const taskData = await response.json();
           setTitle(taskData.title);
-          setDate(taskData.date); // 'YYYY-MM-DD'
-          setHour(taskData.hour.substring(0, 5)); // 'HH:MM:SS' -> 'HH:MM' para o input type="time"
+          setDescription(taskData.description || ''); // Garante que a descrição não seja 'null'
+          setDate(taskData.date);
+          setHour(taskData.hour.substring(0, 5));
         } else {
           const errorData = await response.json();
           setError(`Erro ao carregar tarefa: ${errorData.message || 'Tarefa não encontrada.'}`);
@@ -42,9 +42,8 @@ function UpdateTaskPage({ idTask }) { // Recebe idTask como prop
     };
 
     fetchTask();
-  }, [idTask]); // O efeito roda sempre que idTask muda
+  }, [idTask]);
 
-  // Função para lidar com o envio do formulário de atualização
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -61,7 +60,7 @@ function UpdateTaskPage({ idTask }) { // Recebe idTask como prop
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/tasks/${idTask}`, { // PUT com o ID
+      const response = await fetch(`http://localhost:8080/tasks/${idTask}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -72,6 +71,9 @@ function UpdateTaskPage({ idTask }) { // Recebe idTask como prop
       if (response.ok) {
         const data = await response.json();
         setMessage(`Tarefa "${data.title}" (ID: ${data.id}) atualizada com sucesso!`);
+        if (onUpdateTaskSuccess) {
+          onUpdateTaskSuccess(); // Chama o callback de sucesso
+        }
       } else {
         const errorData = await response.json();
         setMessage(`Erro ao atualizar tarefa: ${errorData.message || 'Lembre-se de preencher todos os campos'}`);
@@ -108,11 +110,10 @@ function UpdateTaskPage({ idTask }) { // Recebe idTask como prop
   if (!idTask) {
       return (
           <div className="container mt-5 alert alert-info">
-              <p>Por favor, forneça o ID da tarefa que deseja atualizar na página inicial ou via listagem.</p>
+              <p>Por favor, forneça o ID da tarefa que deseja atualizar na página de <button className="btn btn-link p-0" onClick={() => window.location.reload()}>Visualizar Tarefas</button>.</p>
           </div>
       );
   }
-
 
   return (
     <div className="container mt-5">
@@ -178,8 +179,8 @@ function UpdateTaskPage({ idTask }) { // Recebe idTask como prop
 }
 
 UpdateTaskPage.propTypes = {
-  // O idTask pode ser string (do input) ou number (se vier direto)
-  idTask: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  idTask: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  onUpdateTaskSuccess: PropTypes.func.isRequired,
 };
 
 export default UpdateTaskPage;

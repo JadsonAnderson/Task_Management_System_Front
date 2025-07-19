@@ -6,7 +6,7 @@ function DeleteTaskPage({ idTask, onTaskDeleted, onCancel }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false); // Novo estado para o processo de exclusão
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -41,7 +41,7 @@ function DeleteTaskPage({ idTask, onTaskDeleted, onCancel }) {
   }, [idTask]);
 
   const handleDelete = async () => {
-    if (!task || isDeleting) return; // Impede múltiplas exclusões
+    if (!task || isDeleting) return;
 
     setIsDeleting(true);
     setMessage('');
@@ -54,8 +54,6 @@ function DeleteTaskPage({ idTask, onTaskDeleted, onCancel }) {
 
       if (response.ok) {
         setMessage(`Tarefa "${task.title}" (ID: ${task.id}) apagada com sucesso!`);
-        // Chama a função passada por prop para notificar o App.jsx
-        // e possivelmente atualizar a lista de tarefas
         if (onTaskDeleted) {
           onTaskDeleted();
         }
@@ -75,10 +73,10 @@ function DeleteTaskPage({ idTask, onTaskDeleted, onCancel }) {
   if (isLoading) {
     return (
       <div className="container mt-5 text-center">
-        <div className="spinner-border text-danger" role="status">
+        <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
-        <p className="mt-2">Carregando detalhes da tarefa para exclusão...</p>
+        <p className="mt-2">Carregando tarefa para exclusão...</p>
       </div>
     );
   }
@@ -89,24 +87,34 @@ function DeleteTaskPage({ idTask, onTaskDeleted, onCancel }) {
         <div className="alert alert-danger" role="alert">
           {error}
         </div>
-        {onCancel && <button className="btn btn-secondary mt-3" onClick={onCancel}>Voltar</button>}
+        <p>Por favor, verifique o ID da tarefa ou tente novamente.</p>
+        <button className="btn btn-secondary mt-3" onClick={onCancel}>Voltar</button>
       </div>
     );
   }
 
-  if (!idTask) {
+  if (!task) {
     return (
       <div className="container mt-5 alert alert-info">
-        <p>Por favor, selecione uma tarefa para apagar na listagem.</p>
-        {onCancel && <button className="btn btn-secondary mt-3" onClick={onCancel}>Voltar para a Listagem</button>}
+        <p>Nenhuma tarefa encontrada para o ID fornecido.</p>
+        <button className="btn btn-secondary mt-3" onClick={onCancel}>Voltar</button>
       </div>
     );
   }
 
   return (
     <div className="container mt-5">
-      <h2>Apagar Tarefa</h2>
-      <p>Você tem certeza que deseja apagar a seguinte tarefa?</p>
+      <h2>Confirmação de Exclusão</h2>
+      <div className="alert alert-warning" role="alert">
+        <p>Você tem certeza que deseja apagar a tarefa abaixo?</p>
+        <p>
+          <strong>ID:</strong> {task.id} <br />
+          <strong>Título:</strong> {task.title} <br />
+          <strong>Descrição:</strong> {task.description || 'N/A'} <br />
+          <strong>Data:</strong> {task.date} <br />
+          <strong>Hora:</strong> {task.hour}
+        </p>
+      </div>
 
       {message && (
         <div className={`alert ${message.includes('sucesso') ? 'alert-success' : 'alert-danger'}`} role="alert">
@@ -114,39 +122,26 @@ function DeleteTaskPage({ idTask, onTaskDeleted, onCancel }) {
         </div>
       )}
 
-      {task && (
-        <div className="card mb-4">
-          <div className="card-body">
-            <h5 className="card-title">**{task.title}** (ID: {task.id})</h5>
-            <p className="card-text">**Descrição:** {task.description || 'N/A'}</p>
-            <p className="card-text">**Data:** {task.date}</p>
-            <p className="card-text">**Hora:** {task.hour}</p>
-          </div>
-        </div>
-      )}
-
-      <div className="d-flex justify-content-start gap-2">
-        <button
-          className="btn btn-danger"
-          onClick={handleDelete}
-          disabled={isDeleting || !task || message.includes('sucesso')} // Desabilita se estiver apagando ou já apagou
-        >
-          {isDeleting ? 'Apagando...' : 'Confirmar Exclusão'}
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={onCancel} // Volta para a página anterior
-          disabled={isDeleting}
-        >
-          Cancelar
-        </button>
-      </div>
+      <button
+        className="btn btn-danger me-2"
+        onClick={handleDelete}
+        disabled={isDeleting}
+      >
+        {isDeleting ? 'Apagando...' : 'Sim, Apagar'}
+      </button>
+      <button
+        className="btn btn-secondary"
+        onClick={onCancel}
+        disabled={isDeleting}
+      >
+        Cancelar
+      </button>
     </div>
   );
 }
 
 DeleteTaskPage.propTypes = {
-  idTask: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  idTask: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   onTaskDeleted: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };

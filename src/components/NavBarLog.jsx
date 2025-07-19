@@ -3,10 +3,8 @@ import PropTypes from 'prop-types';
 function NavBarLog({
   onVisualizarUsuariosClick,
   onAdicionarUsuariosClick,
-  onCadastrarTarefaClick,
-  onAtualizarTarefaClick,
-  onApagarTarefaClick,
-  onListarTarefasClick, // Certifique-se de que está aqui
+  onAddTaskClick,
+  onViewTasksClick,
 }) {
   return (
     <nav className="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
@@ -53,10 +51,10 @@ function NavBarLog({
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      onCadastrarTarefaClick();
+                      onAddTaskClick();
                     }}
                   >
-                    Cadastrar
+                    Adicionar
                   </a>
                 </li>
                 <li>
@@ -65,34 +63,10 @@ function NavBarLog({
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      onAtualizarTarefaClick();
+                      onViewTasksClick();
                     }}
                   >
-                    Atualizar
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="dropdown-item"
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onApagarTarefaClick();
-                    }}
-                  >
-                    Apagar
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="dropdown-item"
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onListarTarefasClick(); // Agora chama a nova função para a página de listagem pura
-                    }}
-                  >
-                    Listar
+                    Visualizar
                   </a>
                 </li>
               </div>
@@ -107,7 +81,7 @@ function NavBarLog({
                 Sobre
               </a>
             </li>
-
+            
             <li className="nav-item dropdown">
               <a
                 className="nav-link dropdown-toggle"
@@ -198,10 +172,8 @@ function NavBarLog({
 NavBarLog.propTypes = {
   onVisualizarUsuariosClick: PropTypes.func.isRequired,
   onAdicionarUsuariosClick: PropTypes.func.isRequired,
-  onCadastrarTarefaClick: PropTypes.func.isRequired,
-  onAtualizarTarefaClick: PropTypes.func.isRequired,
-  onApagarTarefaClick: PropTypes.func.isRequired,
-  onListarTarefasClick: PropTypes.func.isRequired, // Certifique-se de que está aqui e é obrigatória
+  onAddTaskClick: PropTypes.func.isRequired,
+  onViewTasksClick: PropTypes.func.isRequired,
 };
 
 export default NavBarLog;
