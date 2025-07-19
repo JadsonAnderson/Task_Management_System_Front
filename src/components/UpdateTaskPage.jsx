@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) { // Recebe idTask e onUpdateTaskSuccess
+function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');

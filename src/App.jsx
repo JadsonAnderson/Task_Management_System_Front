@@ -6,7 +6,6 @@ import UpdateTaskPage from "./components/UpdateTaskPage";
 import DeleteTaskPage from "./components/DeleteTaskPage";
 import ListTasksPage from "./components/ListTasksPage";
 
-// Utils
 const PAGE_VIEWS = {
   HOME: "home",
   ADD_TASK: "addTask",
@@ -41,6 +40,7 @@ function App() {
     setCurrentPage(PAGE_VIEWS.UPDATE_TASK);
   };
 
+  // Função para apagar uma tarefa
   const handleDeleteTask = (id) => {
     setTaskToDeleteId(id);
     setCurrentPage(PAGE_VIEWS.DELETE_TASK);
@@ -59,6 +59,7 @@ function App() {
     setShouldReloadTasks(true); // Sinaliza para recarregar a lista
   };
 
+  // Função para cancelar a exclusão de uma tarefa
   const handleCancelDelete = () => {
     setTaskToDeleteId(null);
     setCurrentPage(PAGE_VIEWS.VIEW_TASKS); // Volta para a lista

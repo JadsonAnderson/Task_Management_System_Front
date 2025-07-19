@@ -105,7 +105,7 @@ function DeleteTaskPage({ idTask, onTaskDeleted, onCancel }) {
   return (
     <div className="container mt-5">
       <h2>Confirmação de Exclusão</h2>
-      <div className="alert alert-warning" role="alert">
+      <div className="alert alert-secondary" role="alert">
         <p>Você tem certeza que deseja apagar a tarefa abaixo?</p>
         <p>
           <strong>ID:</strong> {task.id} <br />

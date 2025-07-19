@@ -28,7 +28,7 @@ function NavBarLog({
         <div className="collapse navbar-collapse" id="navbarColor02">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
-              <a className="nav-link active" href="#" onClick={() => { /* Lógica para voltar à HOME */ }}>
+              <a className="nav-link active" href="#" onClick={() => { /* Lógica para voltar a Home */ }}>
                 Início
                 <span className="visually-hidden">(current)</span>
               </a>

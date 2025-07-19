@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types'; // Importe PropTypes
+import PropTypes from 'prop-types';
 
-function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDeleted }) { // Adicione onEditTask e onDeleteTask
+function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDeleted }) {
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [idInput, setIdInput] = useState(''); // Estado para o input do ID da tarefa
-  const [message, setMessage] = useState(''); // Para feedback ao usuário
+  const [idInput, setIdInput] = useState('');
+  const [message, setMessage] = useState('');
 
   const fetchTasks = async () => {
     setIsLoading(true);
     setError(null);
     setMessage('');
     try {
-      const response = await fetch('http://localhost:8080/tasks'); // GET all tasks
+      const response = await fetch('http://localhost:8080/tasks');
       if (response.ok) {
         const data = await response.json();
         setTasks(data);
@@ -31,13 +31,13 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
 
   useEffect(() => {
     fetchTasks();
-  }, []); // Carrega as tarefas na montagem do componente
+  }, []);
 
   // Função para lidar com a atualização por ID
   const handleUpdateById = () => {
     if (idInput.trim()) {
-      setMessage(''); // Limpa mensagens anteriores
-      onEditTask(idInput); // Chama a função para editar, passando o ID
+      setMessage('');
+      onEditTask(idInput);
     } else {
       setMessage('Por favor, digite um ID para atualizar.');
     }
@@ -46,8 +46,8 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
   // Função para lidar com a exclusão por ID
   const handleDeleteById = () => {
     if (idInput.trim()) {
-      setMessage(''); // Limpa mensagens anteriores
-      onDeleteTask(idInput); // Chama a função para deletar, passando o ID
+      setMessage('');
+      onDeleteTask(idInput);
     } else {
       setMessage('Por favor, digite um ID para apagar.');
     }
@@ -58,7 +58,7 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
     if (onTaskCreatedOrUpdatedOrDeleted) {
       fetchTasks();
     }
-  }, [onTaskCreatedOrUpdatedOrDeleted]); // Dependência para recarregar quando essa prop mudar
+  }, [onTaskCreatedOrUpdatedOrDeleted]);
 
   if (isLoading) {
     return (
@@ -74,7 +74,7 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
   if (error) {
     return (
       <div className="container mt-5">
-        <div className="alert alert-danger" role="alert">
+        <div className="alert alert-info" role="alert">
           {error}
         </div>
         <button className="btn btn-info mt-3" onClick={fetchTasks}>Tentar Recarregar</button>
@@ -107,14 +107,14 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
           <button
             className="btn btn-warning"
             onClick={handleUpdateById}
-            disabled={!idInput.trim()} // Desabilita se o input estiver vazio
+            // disabled={!idInput.trim()}
           >
             Atualizar
           </button>
           <button
             className="btn btn-danger"
             onClick={handleDeleteById}
-            disabled={!idInput.trim()} // Desabilita se o input estiver vazio
+            // disabled={!idInput.trim()}
           >
             Apagar
           </button>
@@ -157,7 +157,7 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
 ListTasksPage.propTypes = {
   onEditTask: PropTypes.func.isRequired,
   onDeleteTask: PropTypes.func.isRequired,
-  onTaskCreatedOrUpdatedOrDeleted: PropTypes.bool, // Para sinalizar a necessidade de recarregar
+  onTaskCreatedOrUpdatedOrDeleted: PropTypes.bool,
 };
 
 export default ListTasksPage;
