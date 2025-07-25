@@ -1,3 +1,7 @@
+/* src/index.css */
+
+/* Remova ou comente estilos que possam estar centralizando */
+/* Exemplo: */
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -23,16 +27,27 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
+  margin: 0; /* Mantenha isso para remover margem padrão do navegador */
+  display: flex; /* Pode remover ou ajustar se for o caso */
+  place-items: center; /* Pode remover ou ajustar se for o caso */
   min-width: 320px;
   min-height: 100vh;
+
+  /* Remova ou comente se estiverem centralizando */
+  /* display: flex; */
+  /* place-items: center; */
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+#root {
+  /* Remova max-width, margin: 0 auto, padding, text-align */
+  /* Deixe apenas o essencial ou nada aqui se o Bootstrap gerenciar */
+  width: 100%; /* Garanta que o #root ocupe 100% da largura */
+  min-height: 100vh; /* Para que ele ocupe a altura total */
 }
 
 button {
@@ -64,5 +79,28 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+/* Garante que o submenu se posicione corretamente */
+.dropdown-menu .dropdown-menu {
+  margin-top: 0;
+  margin-left: 0.1rem; /* Pequeno espaçamento lateral */
+  position: absolute;
+}
+
+/* Regra para exibir o submenu ao passar o mouse ou focar no item pai */
+.dropdown-item.dropend .dropdown-menu {
+  display: none; /* Esconde por padrão */
+  left: 100%; /* Posiciona à direita do item pai */
+  top: 0;
+}
+
+/* Exibe o submenu quando o item pai (dropend) está com hover ou focus */
+/* Para navegadores maiores */
+@media (min-width: 992px) {
+  /* Exemplo para tela lg, ajuste conforme sua navbar-expand-X */
+  .dropdown-item.dropend:hover > .dropdown-menu,
+  .dropdown-item.dropend > .dropdown-toggle:focus + .dropdown-menu {
+    display: block; /* Mostra o submenu */
   }
 }
