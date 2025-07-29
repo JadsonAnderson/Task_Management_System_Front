@@ -1,0 +1,78 @@
+.forms-wrapper {
+  width: 100%;
+  max-width: 400px;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: transparent;
+}
+
+.forms-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.forms-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  color: #000;
+}
+
+.forms-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  font-size: 1rem;
+}
+
+.forms-submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 999px;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-bottom: 0.75rem;
+}
+
+.forms-submit-btn:hover {
+  background: #2563eb;
+}
+
+/* Links estilo label */
+.forms-links {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.forms-link-text {
+  font-size: 0.9rem;
+  color: #3b82f6;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.forms-link-text:hover {
+  text-decoration: underline;
+}
+
+/* Perfil dos Devs centralizado e mais embaixo */
+.forms-flip-text {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #888;
+  cursor: pointer;
+  margin-top: 2rem;
+}
+
+.forms-flip-text:hover {
+  color: #444;
+}

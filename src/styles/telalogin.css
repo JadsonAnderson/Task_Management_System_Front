@@ -1,0 +1,44 @@
+/* TelaLogin.css */
+.login-container {
+  min-height: 100vh;
+  background-color: #000;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.login-card-wrapper {
+  width: 100%;
+  max-width: 400px;
+  perspective: 1000px;
+}
+
+.login-card {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.login-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.login-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+}
+
+.login-face.back {
+  transform: rotateY(180deg);
+}

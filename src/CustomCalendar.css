@@ -1,0 +1,24 @@
+.react-calendar {
+  border: none;
+  font-family: sans-serif;
+  width: 100%;
+  max-width: 350px;
+}
+
+.react-calendar__tile--active {
+  background: #2563eb !important; /* Azul forte */
+  color: white !important;
+  border-radius: 8px;
+}
+
+.react-calendar__tile--now {
+  background: #93c5fd !important; /* Azul claro para o dia atual */
+  border-radius: 8px;
+  color: #000 !important;
+}
+
+.react-calendar__tile:enabled:hover {
+  background: #bfdbfe !important;
+  color: #000 !important;
+  border-radius: 8px;
+}
