@@ -1,4 +1,4 @@
-# Task_Management_System Parte Back-End
+# Task_Management_System Parte Front-End
 Projeto referente a disciplina de Desenvolvimento de Aplicações Corporativas (DAC): Sistema que gerencia as tarefas do dia a dia.
 
 Inicialmente, este projeto foi criado por Jadson Anderson, um dos integrantes e líder da equipe, que, ao estar aprendendo mais sobre o framework Spring, começou a desenvolver o sistema, mais tarde, juntamente com os integrantes Carlos Henrique, Emanuel Lopes e John Herbert continuaram o desenvolvimento do sistema por um certo período, antes do professor desfazer todas as equipes e pedir que agora o desenvolvimento seria realizado de forma individual.
@@ -109,7 +109,7 @@ O sistema de gerenciamento de tarefas é uma aplicação web desenvolvida com o 
 
 # In English
 
-# Task_Management_System Part Back-End
+# Task_Management_System Part Front-End
 This project was developed as part of the Enterprise Application Development (DAC) course: a system designed to manage daily tasks efficiently.
 
 Initially, the project was created by Jadson Anderson, the team leader, who started working on it while learning more about the Spring framework. Later, Carlos Henrique, Emanuel Lopes, and John Herbert joined the development process for a certain period. However, the professor eventually dissolved all teams and required each student to continue development individually.
