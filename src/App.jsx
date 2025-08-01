@@ -19,6 +19,11 @@ function App() {
   const [taskToUpdateId, setTaskToUpdateId] = useState(null);
   const [taskToDeleteId, setTaskToDeleteId] = useState(null);
   const [shouldReloadTasks, setShouldReloadTasks] = useState(false); // Novo estado para recarregar lista
+  const [theme, setTheme] = useState("light")
+
+  const toggleTheme = () => {
+    setTheme(currentTheme => (currentTheme === "light" ? "dark" : "light"));
+  }
 
   // Função para mostrar a página de adicionar tarefa
   const handleShowAddTaskPage = () => {
@@ -66,6 +71,13 @@ function App() {
     setShouldReloadTasks(true); // Sinaliza para recarregar a lista
   };
 
+  const handleHomeClick = () => {
+    setCurrentPage(PAGE_VIEWS.HOME);
+    setTaskToUpdateId(null);
+    setTaskToDeleteId(null);
+    setShouldReloadTasks(false);  // Reseta qualquer necessidade de recarregar
+  }
+
   const renderMainContent = () => {
     switch (currentPage) {
       case PAGE_VIEWS.ADD_TASK:
@@ -103,8 +115,9 @@ function App() {
         }
       case PAGE_VIEWS.HOME:
       default:
+        // Renderização da página inicial com o botão de tema
         return (
-          <div className="container mt-5">
+          <div className={`container mt-5 text-${theme === 'light' ? 'dark' : 'light'}`}>
             <h1>Bem-vindo ao Gerenciador de Tarefas!</h1>
             <p>Selecione uma opção no menu acima para começar.</p>
           </div>
@@ -114,18 +127,22 @@ function App() {
 
   return (
     <div
+      className={`bg-${theme}`}
       style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
     >
       <NavBarLog
         onAddTaskClick={handleShowAddTaskPage}
         onViewTasksClick={handleShowViewTasksPage}
+        onHomeClick={handleHomeClick}   // Função para voltar para "home"
+        theme={theme}
+        onToggleTheme={toggleTheme}     // Função para alternar o tema
       />
 
       <div style={{ flexGrow: 1 }}>
         {renderMainContent()}
       </div>
 
-      <BaseBoard />
+      <BaseBoard theme={theme} />
     </div>
   );
 }

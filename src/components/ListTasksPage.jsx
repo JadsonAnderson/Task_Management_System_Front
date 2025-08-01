@@ -95,7 +95,7 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
 
       {/* Seção para input de ID e botões de ação */}
       <div className="card mb-4 p-3 shadow-sm">
-        <h5 className="card-title">Gerenciar por ID</h5>
+        <h5 className="card-title">Gerenciar tarefa por ID</h5>
         <div className="input-group mb-3">
           <input
             type="number"
