@@ -166,13 +166,9 @@ function NavBarLog({
           </ul>
 
           <form className="d-flex align-items-center gap-2">
-            {/* <ul className="navbar-nav me-auto"> */}
-              {/* <li className="nav-item"> */}
                 <a className="nav-link" href="#">
                   Suporte
                 </a>
-              {/* </li> */}
-            {/* </ul> */}
             <button
               className={`btn btn-outline-${theme === 'light' ? 'dark' : 'light'}`}
               type="button"

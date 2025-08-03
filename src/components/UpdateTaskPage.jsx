@@ -1,11 +1,26 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
+// Opções de Status e Prioridade para as caixas de seleção
+const STATUS_OPTIONS = [
+  { value: "pending", label: "Pendente" },
+  { value: "in_progress", label: "Em andamento" },
+  { value: "completed", label: "Concluída" },
+];
+
+const PRIORITY_OPTIONS = [
+  { value: "low", label: "Baixa" },
+  { value: "medium", label: "Média" },
+  { value: "high", label: "Alta" },
+];
+
 function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [hour, setHour] = useState('');
+  const [status, setStatus] = useState('');
+  const [priority, setPriority] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,6 +44,8 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
           setDescription(taskData.description || ''); // Garante que a descrição não seja 'null'
           setDate(taskData.date);
           setHour(taskData.hour.substring(0, 5));
+          setStatus(taskData.status || STATUS_OPTIONS[0].value);
+          setPriority(taskData.priority || PRIORITY_OPTIONS[0].value);
         } else {
           const errorData = await response.json();
           setError(`Erro ao carregar tarefa: ${errorData.message || 'Tarefa não encontrada.'}`);
@@ -47,7 +64,7 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!title.trim() || !date.trim() || !hour.trim()) {
+    if (!title.trim() || !date.trim() || !hour.trim() || !status.trim() || !priority.trim()) {
       setMessage('Título, data e hora são obrigatórios!');
       return;
     }
@@ -57,6 +74,8 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
       description: description.trim() === '' ? null : description,
       date: date,
       hour: hour + ':00',
+      status: status,
+      priority: priority,
     };
 
     try {
@@ -150,6 +169,38 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
             maxLength="500"
           ></textarea>
         </div>
+
+        <div className="row mb-3">
+          <div className="col-md-6">
+            <label htmlFor="taskStatus" className="form-label">Status (Obrigatório)</label>
+            <select
+              id="taskStatus"
+              className="form-select"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              required
+            >
+              {STATUS_OPTIONS.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-6">
+            <label htmlFor="taskPriority" className="form-label">Prioridade (Obrigatório)</label>
+            <select
+              id="taskPriority"
+              className="form-select"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              required
+            >
+              {PRIORITY_OPTIONS.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         <div className="mb-3">
           <label htmlFor="taskDate" className="form-label">Data</label>
           <input
