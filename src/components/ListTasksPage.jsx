@@ -1,12 +1,31 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
+// Definição para status e prioridade para os filtros
+const STATUS_OPTIONS = [
+  { value: "all", label: "Todos os status" },
+  { value: "pending", label: "Pendente" },
+  { value: "in_progress", label: "Em andamento" },
+  { value: "completed", label: "Concluída" },
+]
+
+const PRIORITY_OPTIONS = [
+  { value: "all", label: "Todas as prioridades" },
+  { value: "high", label: "Alta" },
+  { value: "medium", label: "Média" },
+  { value: "low", label: "Baixa" },
+]
+
 function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDeleted }) {
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [idInput, setIdInput] = useState('');
   const [message, setMessage] = useState('');
+
+  // Novos estados para os filtros
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [priorityFilter, setPriorityFilter] = useState('all');
 
   const fetchTasks = async () => {
     setIsLoading(true);
@@ -60,6 +79,13 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
     }
   }, [onTaskCreatedOrUpdatedOrDeleted]);
 
+  // Lógica de filtro: cria uma nova lista com base nos estados do fitro
+  const filteredTasks = tasks.filter((task) => {
+    const statusMatch = statusFilter === 'all' || task.status === statusFilter;
+    const priorityMatch = priorityFilter === 'all' || task.priority === priorityFilter;
+    return statusMatch && priorityMatch;
+  });
+
   if (isLoading) {
     return (
       <div className="container mt-5 text-center">
@@ -93,9 +119,42 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
         </div>
       )}
 
+      {/* Seção de Filtros */}
+      <div className="card mb-4 p-3 shadow-sm">
+        <h5 className="card-title">Filtrar tarefas</h5>
+        <div className="row g-3">
+          <div className="col-md-6">
+            <label htmlFor="statusFilter" className="form-label">Status</label>
+            <select
+              id="statusFilter"
+              className="form-select"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              {STATUS_OPTIONS.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-6">
+            <label htmlFor="priorityFilter" className="form-label">Prioridade</label>
+            <select
+              id="priorityFilter"
+              className="form-select"
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+            >
+              {PRIORITY_OPTIONS.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
       {/* Seção para input de ID e botões de ação */}
       <div className="card mb-4 p-3 shadow-sm">
-        <h5 className="card-title">Gerenciar por ID</h5>
+        <h5 className="card-title">Gerenciar tarefa por ID</h5>
         <div className="input-group mb-3">
           <input
             type="number"
@@ -107,24 +166,22 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
           <button
             className="btn btn-warning"
             onClick={handleUpdateById}
-            // disabled={!idInput.trim()}
           >
             Atualizar
           </button>
           <button
             className="btn btn-danger"
             onClick={handleDeleteById}
-            // disabled={!idInput.trim()}
           >
             Apagar
           </button>
         </div>
       </div>
 
-      <h3 className="mt-4">Tarefas Cadastradas</h3>
-      {tasks.length === 0 ? (
+      <h3 className="mt-4">Tarefas cadastradas</h3>
+      {filteredTasks.length === 0 ? (
         <div className="alert alert-info" role="alert">
-          Nenhuma tarefa encontrada.
+          Nenhuma tarefa encontrada com os filtros selecionados.
         </div>
       ) : (
         <table className="table table-striped">
@@ -133,16 +190,20 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
               <th scope="col">ID</th>
               <th scope="col">Título</th>
               <th scope="col">Descrição</th>
+              <th scope="col">Status</th>
+              <th scope="col">Prioridade</th>
               <th scope="col">Data</th>
               <th scope="col">Hora</th>
             </tr>
           </thead>
           <tbody>
-            {tasks.map(task => (
+            {filteredTasks.map(task => (
               <tr key={task.id}>
                 <th scope="row">{task.id}</th>
                 <td>{task.title}</td>
                 <td>{task.description}</td>
+                <td>{task.status}</td>
+                <td>{task.priority}</td>
                 <td>{task.date}</td>
                 <td>{task.hour}</td>
               </tr>
