@@ -64,7 +64,7 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!title.trim() || !date.trim() || !hour.trim() || !status.trim() || !priority.trim()) {
+    if (!title.trim() || !date.trim() || !hour.trim() || !status || !priority) {
       setMessage('Título, data e hora são obrigatórios!');
       return;
     }
