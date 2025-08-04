@@ -3,15 +3,15 @@ import PropTypes from 'prop-types';
 
 // Opções de Status e Prioridade para as caixas de seleção
 const STATUS_OPTIONS = [
-  { value: "pending", label: "Pendente" },
-  { value: "in_progress", label: "Em andamento" },
-  { value: "completed", label: "Concluída" },
+  { value: "Pendente", label: "Pendente" },
+  { value: "Em_andamento", label: "Em andamento" },
+  { value: "Concluida", label: "Concluída" },
 ];
 
 const PRIORITY_OPTIONS = [
-  { value: "low", label: "Baixa" },
-  { value: "medium", label: "Média" },
-  { value: "high", label: "Alta" },
+  { value: "Baixa", label: "Baixa" },
+  { value: "Media", label: "Média" },
+  { value: "Alta", label: "Alta" },
 ];
 
 function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
@@ -64,7 +64,7 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!title.trim() || !date.trim() || !hour.trim() || !status.trim() || !priority.trim()) {
+    if (!title.trim() || !date.trim() || !hour.trim() || !status || !priority) {
       setMessage('Título, data e hora são obrigatórios!');
       return;
     }

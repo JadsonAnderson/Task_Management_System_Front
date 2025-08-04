@@ -3,17 +3,17 @@ import PropTypes from 'prop-types';
 
 // Definição para status e prioridade para os filtros
 const STATUS_OPTIONS = [
-  { value: "all", label: "Todos os status" },
-  { value: "pending", label: "Pendente" },
-  { value: "in_progress", label: "Em andamento" },
-  { value: "completed", label: "Concluída" },
+  { value: "Todas", label: "Todos os status" },
+  { value: "Pendente", label: "Pendente" },
+  { value: "Em_andamento", label: "Em andamento" },
+  { value: "Concluida", label: "Concluída" },
 ]
 
 const PRIORITY_OPTIONS = [
-  { value: "all", label: "Todas as prioridades" },
-  { value: "high", label: "Alta" },
-  { value: "medium", label: "Média" },
-  { value: "low", label: "Baixa" },
+  { value: "Todas", label: "Todas as prioridades" },
+  { value: "Baixa", label: "Baixa" },
+  { value: "Media", label: "Média" },
+  { value: "Alta", label: "Alta" },
 ]
 
 function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDeleted }) {
@@ -22,17 +22,34 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
   const [error, setError] = useState(null);
   const [idInput, setIdInput] = useState('');
   const [message, setMessage] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Todas');
+  const [priorityFilter, setPriorityFilter] = useState('Todas');
 
-  // Novos estados para os filtros
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [priorityFilter, setPriorityFilter] = useState('all');
-
-  const fetchTasks = async () => {
+  // Função que busca as tarefas com base nos filtros
+  const fetchTasks = async (status, priority) => {
     setIsLoading(true);
     setError(null);
     setMessage('');
     try {
-      const response = await fetch('http://localhost:8080/tasks');
+      // Constrói a URL com base nos filtros
+      let url = 'http://localhost:8080/tasks';
+      const params = new URLSearchParams();
+
+      // Constrói os parâmetros de URL apenas se o filtro não for 'Todas'
+      if (status && status !== 'Todas') {
+        params.append('status', status.toUpperCase()); // Converte para maiúsculas para o back-end
+      }
+      if (priority && priority !== 'Todas') {
+        params.append('priority', priority.toUpperCase()); // Converte para maiúsculas
+      }
+
+      // Adiciona os parâmetros à URL se existirem
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+
+      const response = await fetch(url);
+
       if (response.ok) {
         const data = await response.json();
         setTasks(data);
@@ -49,8 +66,8 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    fetchTasks(statusFilter, priorityFilter);
+  }, [statusFilter, priorityFilter, onTaskCreatedOrUpdatedOrDeleted]);
 
   // Função para lidar com a atualização por ID
   const handleUpdateById = () => {
@@ -72,20 +89,6 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
     }
   };
 
-  // Recarrega as tarefas quando uma operação de CRUD é bem-sucedida
-  useEffect(() => {
-    if (onTaskCreatedOrUpdatedOrDeleted) {
-      fetchTasks();
-    }
-  }, [onTaskCreatedOrUpdatedOrDeleted]);
-
-  // Lógica de filtro: cria uma nova lista com base nos estados do fitro
-  const filteredTasks = tasks.filter((task) => {
-    const statusMatch = statusFilter === 'all' || task.status === statusFilter;
-    const priorityMatch = priorityFilter === 'all' || task.priority === priorityFilter;
-    return statusMatch && priorityMatch;
-  });
-
   if (isLoading) {
     return (
       <div className="container mt-5 text-center">
@@ -103,7 +106,8 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
         <div className="alert alert-info" role="alert">
           {error}
         </div>
-        <button className="btn btn-info mt-3" onClick={fetchTasks}>Tentar Recarregar</button>
+        <button className="btn btn-info mt-3" onClick={() => fetchTasks(statusFilter, priorityFilter)}
+          >Tentar Recarregar</button>
       </div>
     );
   }
@@ -179,7 +183,7 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
       </div>
 
       <h3 className="mt-4">Tarefas cadastradas</h3>
-      {filteredTasks.length === 0 ? (
+      {tasks.length === 0 ? (
         <div className="alert alert-info" role="alert">
           Nenhuma tarefa encontrada com os filtros selecionados.
         </div>
@@ -197,7 +201,7 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
             </tr>
           </thead>
           <tbody>
-            {filteredTasks.map(task => (
+            {tasks.map(task => (
               <tr key={task.id}>
                 <th scope="row">{task.id}</th>
                 <td>{task.title}</td>
