@@ -24,6 +24,8 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
   const [message, setMessage] = useState('');
   const [statusFilter, setStatusFilter] = useState('Todas');
   const [priorityFilter, setPriorityFilter] = useState('Todas');
+  const [sortBy, setSortBy] = useState('date');
+  const [sortOrder, setSortOrder] = useState('desc')
 
   // Função que busca as tarefas com base nos filtros
   const fetchTasks = async (status, priority) => {
@@ -88,6 +90,45 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
       setMessage('Por favor, digite um ID para apagar.');
     }
   };
+
+  // Função que atualiza o estado de ordenação
+  const handleSort = (column) => {
+    // Se a coluna for a mesma, inverte a ordem
+    if (sortBy === column) {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+        // Se a coluna for diferente, define a nova coluna e reseta a ordem
+        setSortBy(column);
+        setSortOrder('desc'); 
+    }
+  };
+
+  // Lógica de ordenação somente no "front end"
+  const sortedTasks = [...tasks].sort((a, b) => {
+    let comparison = 0;
+    
+    switch (sortBy) {
+      case 'priority': {
+        const priorityOrder = { 'ALTA': 3, 'MEDIA': 2, 'BAIXA': 1 };
+        comparison = priorityOrder[a.priority] - priorityOrder[b.priority];
+        break;
+      }
+      case 'status': {
+        comparison = a.status.localeCompare(b.status);
+        break;
+      }
+      case 'date':
+      default: {
+        const dateA = new Date(`${a.date}T${a.hour}`);
+        const dateB = new Date(`${b.date}T${b.hour}`);
+        comparison = dateA - dateB;
+        break;
+      }
+    }
+
+    // Aplica a ordem ()
+    return sortOrder === 'asc' ? comparison : -comparison;
+  });
 
   if (isLoading) {
     return (
@@ -182,8 +223,35 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
         </div>
       </div>
 
-      <h3 className="mt-4">Tarefas cadastradas</h3>
-      {tasks.length === 0 ? (
+      {/* Novo layout para título e ordenação */}
+      <div className="d-flex justify-content-between align-items-center mt-4 mb-2">
+        <h3 className="m-0">Tarefas cadastradas</h3>
+        <div className="btn-group" role="group" aria-label="Opções de Ordenação">
+          <button
+            type="button"
+            className={`btn btn-sm ${sortBy === 'priority' ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => handleSort('priority')}
+          >
+            Ordenar por Prioridade
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${sortBy === 'status' ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => handleSort('status')}
+          >
+            Ordenar por Status
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${sortBy === 'date' ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => handleSort('date')}
+          >
+            Ordenar por Data
+          </button>
+        </div>
+      </div>
+
+      {sortedTasks.length === 0 ? (
         <div className="alert alert-info" role="alert">
           Nenhuma tarefa encontrada com os filtros selecionados.
         </div>
@@ -201,7 +269,7 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
             </tr>
           </thead>
           <tbody>
-            {tasks.map(task => (
+            {sortedTasks.map(task => (
               <tr key={task.id}>
                 <th scope="row">{task.id}</th>
                 <td>{task.title}</td>
