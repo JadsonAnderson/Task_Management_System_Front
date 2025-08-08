@@ -14,6 +14,13 @@ const PRIORITY_OPTIONS = [
   { value: "Alta", label: "Alta" },
 ];
 
+// Definição de categorias das tarefas (reutilizando do ListTasksPage)
+const CATEGORIES = [
+  { id: 'Pessoal', name: 'Pessoal', color: '#ffc107' },
+  { id: 'Trabalho', name: 'Trabalho', color: '#17a2b8' },
+  { id: 'Estudos', name: 'Estudos', color: '#007bff' }
+];
+
 function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -21,6 +28,7 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
   const [hour, setHour] = useState('');
   const [status, setStatus] = useState('');
   const [priority, setPriority] = useState('');
+  const [category, setCategory] = useState(''); // NOVO: Estado para a categoria
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -44,8 +52,24 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
           setDescription(taskData.description || ''); // Garante que a descrição não seja 'null'
           setDate(taskData.date);
           setHour(taskData.hour.substring(0, 5));
-          setStatus(taskData.status || STATUS_OPTIONS[0].value);
-          setPriority(taskData.priority || PRIORITY_OPTIONS[0].value);
+          // setStatus(taskData.status || STATUS_OPTIONS[0].value);
+          // setPriority(taskData.priority || PRIORITY_OPTIONS[0].value);
+
+          // Mapeia o status do backend para o formato do frontend
+          const frontEndStatus = STATUS_OPTIONS.find(opt => opt.value.toUpperCase() === taskData.status)
+                                              ?.value || STATUS_OPTIONS[0].value;
+
+          setStatus(frontEndStatus);
+
+          // Mapeia a prioridade do backend para o formato do frontend
+          const frontendPriority = PRIORITY_OPTIONS.find(opt => opt.value.toUpperCase() === taskData.priority)
+                                                  ?.value || PRIORITY_OPTIONS[0].value;
+          setPriority(frontendPriority);
+          
+          // Carrega a categoria do localStorage
+          const savedCategory = localStorage.getItem(`task_category_${idTask}`);
+          setCategory(savedCategory || CATEGORIES[0].id);
+
         } else {
           const errorData = await response.json();
           setError(`Erro ao carregar tarefa: ${errorData.message || 'Tarefa não encontrada.'}`);
@@ -73,12 +97,17 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
       title: title,
       description: description.trim() === '' ? null : description,
       date: date,
-      hour: hour + ':00',
-      status: status,
-      priority: priority,
+      hour: hour,
+      // Conversão do status de volta para o estado do backend
+      status: status.toUpperCase(),
+      // Conversão da prioridade de volta para o estado do backend
+      priority: priority.toUpperCase(),
     };
 
     try {
+      // Salva a categoria no localStorage antes de enviar a requisição
+      localStorage.setItem(`task_category_${idTask}`, category);
+
       const response = await fetch(`http://localhost:8080/tasks/${idTask}`, {
         method: 'PUT',
         headers: {
@@ -171,7 +200,7 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
         </div>
 
         <div className="row mb-3">
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label htmlFor="taskStatus" className="form-label">Status (Obrigatório)</label>
             <select
               id="taskStatus"
@@ -185,7 +214,7 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
               ))}
             </select>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label htmlFor="taskPriority" className="form-label">Prioridade (Obrigatório)</label>
             <select
               id="taskPriority"
@@ -196,6 +225,19 @@ function UpdateTaskPage({ idTask, onUpdateTaskSuccess }) {
             >
               {PRIORITY_OPTIONS.map(option => (
                 <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="taskCategory" className="form-label">Categoria</label>
+            <select
+              id="taskCategory"
+              className="form-select"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              {CATEGORIES.map(option => (
+                <option key={option.id} value={option.id}>{option.name}</option>
               ))}
             </select>
           </div>

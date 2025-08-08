@@ -16,6 +16,13 @@ const PRIORITY_OPTIONS = [
   { value: "Alta", label: "Alta" },
 ]
 
+// Definição de categorias das tarefas
+const CATEGORIES = [
+  { id: 'Pessoal', name: 'Pessoal', color: '#ffc107' },
+  { id: 'Trabalho', name: 'Trabalho', color: '#17a2b8' },
+  { id: 'Estudos', name: 'Estudos', color: '#007bff' }
+];
+
 function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDeleted }) {
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,23 +31,26 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
   const [message, setMessage] = useState('');
   const [statusFilter, setStatusFilter] = useState('Todas');
   const [priorityFilter, setPriorityFilter] = useState('Todas');
+  const [categoryFilter, setCategoryFilter] = useState('Todas');
+  const [sortBy, setSortBy] = useState('date');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   // Função que busca as tarefas com base nos filtros
   const fetchTasks = async (status, priority) => {
     setIsLoading(true);
     setError(null);
     setMessage('');
+    // Constrói a URL com base nos filtros
     try {
-      // Constrói a URL com base nos filtros
       let url = 'http://localhost:8080/tasks';
       const params = new URLSearchParams();
 
       // Constrói os parâmetros de URL apenas se o filtro não for 'Todas'
       if (status && status !== 'Todas') {
-        params.append('status', status.toUpperCase()); // Converte para maiúsculas para o back-end
+        params.append('status', status.toUpperCase());
       }
       if (priority && priority !== 'Todas') {
-        params.append('priority', priority.toUpperCase()); // Converte para maiúsculas
+        params.append('priority', priority.toUpperCase());
       }
 
       // Adiciona os parâmetros à URL se existirem
@@ -52,7 +62,14 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
 
       if (response.ok) {
         const data = await response.json();
-        setTasks(data);
+        // Adiciona a categoria às tarefas vindas do back-end
+        const tasksWithCategories = data.map(task => ({
+          ...task,
+          // Simula a persistência da categoria usando localStorage
+          // Se não houver, atribui a primeira categoria como padrão
+          category: localStorage.getItem(`task_category_${task.id}`) || CATEGORIES[0].id,
+          }));
+        setTasks(tasksWithCategories);
       } else {
         const errorData = await response.json();
         setError(`Erro ao carregar tarefas: ${errorData.message || 'Erro desconhecido'}`);
@@ -89,6 +106,53 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
     }
   };
 
+  // Função que atualiza o estado de ordenação
+  const handleSort = (column) => {
+    // Se a coluna for a mesma, inverte a ordem
+    if (sortBy === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortOrder('desc');
+    }
+  };
+
+  // Lógica de filtragem combinada
+  const filteredTasks = tasks.filter(task => {
+    const matchesStatus = statusFilter === 'Todas' || task.status === statusFilter.toUpperCase();
+    const matchesPriority = priorityFilter === 'Todas' || task.priority === priorityFilter.toUpperCase();
+    const matchesCategory = categoryFilter === 'Todas' || task.category === categoryFilter;
+
+    return matchesStatus && matchesPriority && matchesCategory;
+  });
+
+  // Lógica de ordenação somente no "front end"
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    let comparison = 0;
+
+    switch (sortBy) {
+      case 'priority': {
+        const priorityOrder = { 'ALTA': 3, 'MEDIA': 2, 'BAIXA': 1 };
+        comparison = priorityOrder[a.priority] - priorityOrder[b.priority];
+        break;
+      }
+      case 'status': {
+        comparison = a.status.localeCompare(b.status);
+        break;
+      }
+      case 'date':
+      default: {
+        const dateA = new Date(`${a.date}T${a.hour}`);
+        const dateB = new Date(`${b.date}T${b.hour}`);
+        comparison = dateA - dateB;
+        break;
+      }
+    }
+
+    // Aplica a ordem ()
+    return sortOrder === 'asc' ? comparison : -comparison;
+  });
+
   if (isLoading) {
     return (
       <div className="container mt-5 text-center">
@@ -102,13 +166,13 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
 
   if (error) {
     return (
-      <div className="container mt-5">
-        <div className="alert alert-info" role="alert">
+    <div className="container mt-5">
+    <div className="alert alert-info" role="alert">
           {error}
-        </div>
-        <button className="btn btn-info mt-3" onClick={() => fetchTasks(statusFilter, priorityFilter)}
+    </div>
+    <button className="btn btn-info mt-3" onClick={() => fetchTasks(statusFilter, priorityFilter)}
           >Tentar Recarregar</button>
-      </div>
+    </div>
     );
   }
 
@@ -127,7 +191,7 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
       <div className="card mb-4 p-3 shadow-sm">
         <h5 className="card-title">Filtrar tarefas</h5>
         <div className="row g-3">
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label htmlFor="statusFilter" className="form-label">Status</label>
             <select
               id="statusFilter"
@@ -140,7 +204,7 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
               ))}
             </select>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label htmlFor="priorityFilter" className="form-label">Prioridade</label>
             <select
               id="priorityFilter"
@@ -153,6 +217,20 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
               ))}
             </select>
           </div>
+          <div className="col-md-4">
+            <label htmlFor="categoryFilter" className="form-label">Categoria</label>
+            <select
+              id="categoryFilter"
+              className="form-select"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+            >
+                <option value="Todas">Todas as categorias</option>
+                  {CATEGORIES.map(category => (
+                <option key={category.id} value={category.id}>{category.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -160,13 +238,13 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
       <div className="card mb-4 p-3 shadow-sm">
         <h5 className="card-title">Gerenciar tarefa por ID</h5>
         <div className="input-group mb-3">
-          <input
-            type="number"
-            className="form-control"
-            placeholder="Qual o ID da tarefa?"
-            value={idInput}
-            onChange={(e) => setIdInput(e.target.value)}
-          />
+        <input
+          type="number"
+          className="form-control"
+          placeholder="Qual o ID da tarefa?"
+          value={idInput}
+          onChange={(e) => setIdInput(e.target.value)}
+        />
           <button
             className="btn btn-warning"
             onClick={handleUpdateById}
@@ -182,8 +260,35 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
         </div>
       </div>
 
-      <h3 className="mt-4">Tarefas cadastradas</h3>
-      {tasks.length === 0 ? (
+      {/* Layout para título e ordenação */}
+      <div className="d-flex justify-content-between align-items-center mt-4 mb-2">
+        <h3 className="m-0">Tarefas cadastradas</h3>
+        <div className="btn-group" role="group" aria-label="Opções de Ordenação">
+          <button
+            type="button"
+            className={`btn btn-sm ${sortBy === 'priority' ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => handleSort('priority')}
+          >
+            Ordenar por Prioridade
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${sortBy === 'status' ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => handleSort('status')}
+          >
+            Ordenar por Status
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${sortBy === 'date' ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => handleSort('date')}
+          >
+            Ordenar por Data
+          </button>
+        </div>
+      </div>
+
+      {sortedTasks.length === 0 ? (
         <div className="alert alert-info" role="alert">
           Nenhuma tarefa encontrada com os filtros selecionados.
         </div>
@@ -196,18 +301,20 @@ function ListTasksPage({ onEditTask, onDeleteTask, onTaskCreatedOrUpdatedOrDelet
               <th scope="col">Descrição</th>
               <th scope="col">Status</th>
               <th scope="col">Prioridade</th>
+              <th scope="col">Categoria</th>
               <th scope="col">Data</th>
               <th scope="col">Hora</th>
             </tr>
           </thead>
-          <tbody>
-            {tasks.map(task => (
+        <tbody>
+            {sortedTasks.map(task => (
               <tr key={task.id}>
                 <th scope="row">{task.id}</th>
                 <td>{task.title}</td>
                 <td>{task.description}</td>
                 <td>{task.status}</td>
                 <td>{task.priority}</td>
+                <td>{task.category}</td>
                 <td>{task.date}</td>
                 <td>{task.hour}</td>
               </tr>

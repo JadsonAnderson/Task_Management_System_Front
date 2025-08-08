@@ -14,6 +14,13 @@ const PRIORITY_OPTIONS = [
   { value: "Alta", label: "Alta" },
 ];
 
+// Definição de categorias das tarefas
+const CATEGORIES = [
+  { id: 'Pessoal', name: 'Pessoal', color: '#ffc107' },
+  { id: 'Trabalho', name: 'Trabalho', color: '#17a2b8' },
+  { id: 'Estudos', name: 'Estudos', color: '#007bff' }
+];
+
 function AddTaskPage( {onCreateTaskSuccess} ) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -21,15 +28,21 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
   const [hour, setHour] = useState('');
   const [status, setStatus] = useState(STATUS_OPTIONS[0].value);
   const [priority, setPriority] = useState(PRIORITY_OPTIONS[0].value);
+  const [category, setCategory] = useState(CATEGORIES[0].id);
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const allFieldsEmpty = !title.trim() && !description.trim() && !date.trim() && !hour.trim();
+    // const allFieldsEmpty = !title.trim() && !description.trim() && !date.trim() && !hour.trim();
 
-    if (allFieldsEmpty) {
-      setMessage('Lembre de preencher todos os campos: Título, Descrição, Data e Hora são obrigatórios!');
+    // if (allFieldsEmpty) {
+    //   setMessage('Lembre de preencher todos os campos: Título, Descrição, Data e Hora são obrigatórios!');
+    //   return;
+    // }
+
+    if (!title.trim() || !description.trim() || !date.trim() || !hour.trim()) {
+      setMessage('Título, Descrição, Data e Hora são obrigatórios!');
       return;
     }
 
@@ -37,9 +50,9 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
       title: title,
       description: description.trim() === '' ? null : description,
       date: date,
-      hour: hour + ':00',
-      status: status,
-      priority: priority,
+      hour: hour,
+      status: status.toUpperCase(),
+      priority: priority.toUpperCase(),
     };
 
     try {
@@ -53,6 +66,8 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
 
       if (response.ok) {
         const data = await response.json();
+        // Salva a categoria no localstorage após o sucesso
+        localStorage.setItem(`task_category_${data.id}`, category);
         setMessage(`Tarefa "${data.title}" (ID: ${data.id}) cadastrada com sucesso!`);
         setTitle('');
         setDescription('');
@@ -60,6 +75,7 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
         setHour('');
         setStatus(STATUS_OPTIONS[0].value);
         setPriority(PRIORITY_OPTIONS[0].value);
+        setCategory(CATEGORIES[0].id);  // Limpa o campo de categoria
         if (onCreateTaskSuccess) {
           onCreateTaskSuccess();
         }
@@ -142,8 +158,21 @@ function AddTaskPage( {onCreateTaskSuccess} ) {
               ))}
             </select>
           </div>
-        </div>
-
+          {/* Campo de seleção para categoria */}
+        <div className="col-md-4">
+          <label htmlFor="taskCategory" className="form-label">Categoria</label>
+            <select
+              id="taskCategory"
+              className="form-select"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              {CATEGORIES.map(option => (
+                <option key={option.id} value={option.id}>{option.name}</option>
+              ))};
+            </select>
+          </div>
+          </div>
         <div className="mb-3">
           <label htmlFor="taskDate" className="form-label">Data</label>
           <input
